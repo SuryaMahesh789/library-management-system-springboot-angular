@@ -13,8 +13,6 @@ A full-stack Library Management System built using Spring Boot and Angular with 
 - Application running successfully  
 - Basic `/hello` API implemented and tested  
 
----
-
 ## 🛠 Tech Stack
 - Java  
 - Spring Boot  
@@ -22,16 +20,12 @@ A full-stack Library Management System built using Spring Boot and Angular with 
 - MySQL  
 - Lombok  
 
----
-
 ## ▶️ Run Locally
 ```bash
 git clone <repo-url>
 cd knowledgehub-booksphere
 ./mvnw spring-boot:run
 ```
-
----
 
 ## 📌 Next Steps
 - Setup project structure (Controller, Service, Repository)  
