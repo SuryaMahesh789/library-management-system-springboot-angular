@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class KnowledgeHubLibraryManagementSystemApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         SpringApplication.run(KnowledgeHubLibraryManagementSystemApplication.class, args);
+        System.out.println("Main Entry point of the application");
     }
 
 }
