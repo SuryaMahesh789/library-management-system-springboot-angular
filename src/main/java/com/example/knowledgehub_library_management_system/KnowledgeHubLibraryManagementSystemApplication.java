@@ -9,7 +9,7 @@ public class KnowledgeHubLibraryManagementSystemApplication {
     public static void main(String[] args)
     {
         SpringApplication.run(KnowledgeHubLibraryManagementSystemApplication.class, args);
-        System.out.println("Main Entry point of the application");
+        System.out.println("Welcommee..");
     }
 
 }
