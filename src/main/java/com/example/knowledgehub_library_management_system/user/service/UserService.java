@@ -6,8 +6,13 @@ import com.example.knowledgehub_library_management_system.common.entity.User;
 import com.example.knowledgehub_library_management_system.role.repository.RoleRepository;
 import com.example.knowledgehub_library_management_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -56,5 +61,44 @@ public class UserService
         return "User Promoted to ADMIN SuccessFully";
 
     }
+
+    public Map<String,Object> getCurrentUserDetails()
+    {
+        Object prinicipal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) prinicipal;
+
+        Map<String ,Object> response = new HashMap<>();
+        response.put("email",user.getEmail());
+        response.put("role",user.getRole().getName());
+
+
+        return response;
+    }
+
+    public Map<String,Object> getDashboard()
+    {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) principal;
+
+        Map<String,Object>response = new HashMap<>();
+
+        if(user.getRole().getName().equals("ADMIN"))
+        {
+            response.put("message","Admin Dashboard");
+            response.put("totalUsers",userRepository.count());
+            response.put("totalBooks",120); // dummy
+            response.put("System Status","All Systems Running");
+        }
+        else
+        {
+            response.put("message","User Dashboard");
+            response.put("availableBooks",50); // dummy
+            response.put("recommended", List.of("Atomic Habits","Clean Code"));
+        }
+
+        return response;
+    }
+
+
 
 }
