@@ -44,4 +44,17 @@ public class UserService
         userRepository.save(user);
         return "User registered successfully...";
     }
+
+    public String promoteAdmin(Long userId)
+    {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
+        Role adminRole = roleRepository.findByName("ADMIN").orElseThrow(() -> new RuntimeException("ADMIN role not found"));
+
+        user.setRole(adminRole);
+        userRepository.save(user);
+
+        return "User Promoted to ADMIN SuccessFully";
+
+    }
+
 }
