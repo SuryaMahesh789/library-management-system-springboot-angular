@@ -46,6 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
 //                    before rbac
 //                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,null, Collections.emptyList());
 
+//                    After RBAC
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user,null, List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole().getName())));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     System.out.println("Authenticated user: "+email);
