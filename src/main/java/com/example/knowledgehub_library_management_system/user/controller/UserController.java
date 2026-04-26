@@ -41,4 +41,11 @@ public class UserController{
         return userService.getDashboard();
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}")
+    public Map<String,Object> getUserById(@PathVariable Long id)
+    {
+        return userService.getUserById(id);
+    }
+
 }

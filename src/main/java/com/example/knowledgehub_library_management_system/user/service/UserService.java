@@ -99,6 +99,41 @@ public class UserService
         return response;
     }
 
+    public Map<String,Object> getUserById(Long userId)
+    {
+        // 1. Get logged-in user
+        User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+        // 2. Fetch requested user from DB
+        User requestedUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 3. Check access rules
+        // Admin → full access
+        if(loggedInUser.getRole().getName().equals("ADMIN"))
+        {
+            return buildUserResponse(requestedUser);
+        }
+
+        // User accessing own data
+        if(loggedInUser.getId().equals(userId))
+        {
+            return buildUserResponse(requestedUser);
+        }
+
+        throw new RuntimeException("Access Denied: you can view only your profile");
+
+    }
+
+    private Map<String,Object> buildUserResponse(User user)
+    {
+        Map<String,Object> response = new HashMap<>();
+
+        response.put("id",user.getId());
+        response.put("role",user.getRole().getName());
+        response.put("name",user.getName());
+        response.put("email",user.getEmail());
+        response.put("password",user.getPassword());
+        return response;
+    }
 
 }
