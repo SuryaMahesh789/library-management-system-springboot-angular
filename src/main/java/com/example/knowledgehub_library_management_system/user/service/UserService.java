@@ -3,6 +3,7 @@ package com.example.knowledgehub_library_management_system.user.service;
 import com.example.knowledgehub_library_management_system.auth.dto.RegisterRequestDTO;
 import com.example.knowledgehub_library_management_system.common.entity.Role;
 import com.example.knowledgehub_library_management_system.common.entity.User;
+import com.example.knowledgehub_library_management_system.exception.ResourceNotFoundException;
 import com.example.knowledgehub_library_management_system.role.repository.RoleRepository;
 import com.example.knowledgehub_library_management_system.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class UserService
                                     .stream()
                                     .filter(r -> r.getName().equals("USER"))
                                     .findFirst()
-                                    .orElseThrow(() -> new RuntimeException("Role not found"));
+                                    .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
         User user = new User();
         user.setName(request.getName());
@@ -52,8 +53,8 @@ public class UserService
 
     public String promoteAdmin(Long userId)
     {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found"));
-        Role adminRole = roleRepository.findByName("ADMIN").orElseThrow(() -> new RuntimeException("ADMIN role not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        Role adminRole = roleRepository.findByName("ADMIN").orElseThrow(() -> new ResourceNotFoundException("ADMIN role not found"));
 
         user.setRole(adminRole);
         userRepository.save(user);
@@ -105,7 +106,7 @@ public class UserService
         User loggedInUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // 2. Fetch requested user from DB
-        User requestedUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User requestedUser = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // 3. Check access rules
         // Admin → full access
@@ -120,7 +121,7 @@ public class UserService
             return buildUserResponse(requestedUser);
         }
 
-        throw new RuntimeException("Access Denied: you can view only your profile");
+        throw new ResourceNotFoundException("Access Denied: you can view only your profile");
 
     }
 

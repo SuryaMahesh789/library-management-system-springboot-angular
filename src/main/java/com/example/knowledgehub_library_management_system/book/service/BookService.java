@@ -7,6 +7,7 @@ import com.example.knowledgehub_library_management_system.common.entity.Book;
 import com.example.knowledgehub_library_management_system.common.entity.BookRequest;
 import com.example.knowledgehub_library_management_system.common.entity.Genre;
 import com.example.knowledgehub_library_management_system.common.entity.User;
+import com.example.knowledgehub_library_management_system.exception.ResourceNotFoundException;
 import com.example.knowledgehub_library_management_system.genre.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +46,7 @@ public class BookService
 
     public String createBook(BookRequestDTO request)
     {
-        Genre genre = genreRepository.findById(request.getGenreId()).orElseThrow(() -> new RuntimeException("Genre not found"));
+        Genre genre = genreRepository.findById(request.getGenreId()).orElseThrow(() -> new ResourceNotFoundException("Genre not found"));
 
         Book book = new Book();
         book.setTitle(request.getTitle());
@@ -68,12 +69,12 @@ public class BookService
 
     public Book getBookById(Long id)
     {
-        return bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not Found"));
+        return bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not Found"));
     }
 
     public String updateBook(Long id,BookRequestDTO request)
     {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book Not Found"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book Not Found"));
 
         book.setTitle(request.getTitle());
         book.setAuthor(request.getAuthor());
@@ -89,7 +90,7 @@ public class BookService
 
     public String deleteBook(Long id)
     {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found"));
         bookRepository.delete(book);
 
         return "Book Deleted Successfully...";
@@ -98,7 +99,7 @@ public class BookService
     public String requestBook(Long bookId)
     {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
         BookRequest bookRequest = new BookRequest();
         bookRequest.setUser(user);
@@ -113,7 +114,7 @@ public class BookService
 
     public String approveRequest(Long requestId)
     {
-        BookRequest bookRequest = bookRequestRepository.findById(requestId).orElseThrow(() -> new RuntimeException("Book Request not found"));
+        BookRequest bookRequest = bookRequestRepository.findById(requestId).orElseThrow(() -> new ResourceNotFoundException("Book Request not found"));
 
         bookRequest.setStatus("APPROVED");
         bookRequestRepository.save(bookRequest);
@@ -123,7 +124,7 @@ public class BookService
 
     public String rejectRequest(Long requestId)
     {
-        BookRequest bookRequest = bookRequestRepository.findById(requestId).orElseThrow(()->new RuntimeException("Book Request is not found"));
+        BookRequest bookRequest = bookRequestRepository.findById(requestId).orElseThrow(()->new ResourceNotFoundException("Book Request is not found"));
         bookRequest.setStatus("REJECTED");
         bookRequestRepository.save(bookRequest);
 
