@@ -2,10 +2,14 @@ package com.example.knowledgehub_library_management_system.book.service;
 
 import com.example.knowledgehub_library_management_system.book.dto.BookRequestDTO;
 import com.example.knowledgehub_library_management_system.book.repository.BookRepository;
+import com.example.knowledgehub_library_management_system.book.repository.BookRequestRepository;
 import com.example.knowledgehub_library_management_system.common.entity.Book;
+import com.example.knowledgehub_library_management_system.common.entity.BookRequest;
 import com.example.knowledgehub_library_management_system.common.entity.Genre;
+import com.example.knowledgehub_library_management_system.common.entity.User;
 import com.example.knowledgehub_library_management_system.genre.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,7 @@ public class BookService
 
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
+    private final BookRequestRepository bookRequestRepository;
 
     public String createDummyBook()
     {
@@ -90,7 +95,40 @@ public class BookService
         return "Book Deleted Successfully...";
     }
 
+    public String requestBook(Long bookId)
+    {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
 
+        BookRequest bookRequest = new BookRequest();
+        bookRequest.setUser(user);
+        bookRequest.setBook(book);
+        bookRequest.setStatus("PENDING");
+
+        bookRequestRepository.save(bookRequest);
+
+        return "Book Request Created successfully";
+
+    }
+
+    public String approveRequest(Long requestId)
+    {
+        BookRequest bookRequest = bookRequestRepository.findById(requestId).orElseThrow(() -> new RuntimeException("Book Request not found"));
+
+        bookRequest.setStatus("APPROVED");
+        bookRequestRepository.save(bookRequest);
+
+        return "Request Approved";
+    }
+
+    public String rejectRequest(Long requestId)
+    {
+        BookRequest bookRequest = bookRequestRepository.findById(requestId).orElseThrow(()->new RuntimeException("Book Request is not found"));
+        bookRequest.setStatus("REJECTED");
+        bookRequestRepository.save(bookRequest);
+
+        return "Request Rejected";
+    }
 
 
 }

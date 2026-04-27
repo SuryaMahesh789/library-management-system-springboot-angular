@@ -78,5 +78,30 @@ public class BookController
         return bookService.deleteBook(id);
     }
 
+       // User - Request Book
+       @PreAuthorize("hasRole('USER')")
+       @PostMapping("/request/{bookId}")
+       public String requestBook(@PathVariable Long bookId)
+       {
+           return bookService.requestBook(bookId);
+       }
 
+//       ADMIN - Approve Request
+
+        @PreAuthorize("hasRole('ADMIN')")
+        @PutMapping("/request/{id}/approve")
+        public String approve(@PathVariable Long id)
+        {
+            return bookService.approveRequest(id);
+        }
+
+
+//       ADMIN - Reject Request
+
+        @PreAuthorize("hasRole('ADMIN')")
+        @PutMapping("/request/{id}/reject")
+        public String reject(@PathVariable Long id)
+        {
+            return bookService.rejectRequest(id);
+        }
 }
