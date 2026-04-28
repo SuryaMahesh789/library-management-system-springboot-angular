@@ -3,6 +3,7 @@ package com.example.knowledgehub_library_management_system.book.controller;
 
 import com.example.knowledgehub_library_management_system.book.dto.BookRequestDTO;
 import com.example.knowledgehub_library_management_system.book.service.BookService;
+import com.example.knowledgehub_library_management_system.common.dto.ApiResponse;
 import com.example.knowledgehub_library_management_system.common.entity.Book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,54 +19,56 @@ public class BookController
     private final BookService bookService;
 
     @GetMapping("/test-db")
-    public String testDB()
+    public ApiResponse<String> testDB()
     {
-        return bookService.createDummyBook();
+        return new ApiResponse<>(200,"Test Successful",bookService.createDummyBook());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
-    public String addBook()
+    public ApiResponse<String> addBook()
     {
-        return "Book Added By Admin...";
+        return new ApiResponse<>(200,"Book Added By Admin...",null);
     }
 
+
+
+    // 🔹 USER TEST API (Optional)
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/user")
-    public String userAccess()
-    {
-        return "User Access Granted";
+    public ApiResponse<String> userAccess() {
+        return new ApiResponse<>(200, "User access granted", null);
     }
-
 
 //    Create Book - ADMIN
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public String createBook(@RequestBody BookRequestDTO request)
+    public ApiResponse<Void> createBook(@RequestBody BookRequestDTO request)
     {
-        return bookService.createBook(request);
+        return new ApiResponse<>(200,bookService.createBook(request),null);
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/all")
-    public List<Book> getAllBooks()
+    public ApiResponse<List<Book>> getAllBooks()
     {
-        return bookService.getAllBooks();
+        return new ApiResponse<>(200,"Books Fetched Successfully",bookService.getAllBooks());
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public Book getBook(@PathVariable Long id)
+    public ApiResponse<Book> getBook(@PathVariable Long id)
     {
-        return bookService.getBookById(id);
+        return new ApiResponse<>(200,"Book Fetched Successfully",bookService.getBookById(id));
     }
 
 //    Update Book - ADMIN
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public String updateBook(@PathVariable Long id,@RequestBody BookRequestDTO request)
+    public ApiResponse<Void> updateBook(@PathVariable Long id,@RequestBody BookRequestDTO request)
     {
-        return bookService.updateBook(id,request);
+        bookService.updateBook(id, request);
+        return new ApiResponse<>(200, "Book updated successfully", null);
     }
 
 
@@ -73,26 +76,26 @@ public class BookController
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public String deleteBook(@PathVariable Long id)
+    public ApiResponse<Void> deleteBook(@PathVariable Long id)
     {
-        return bookService.deleteBook(id);
-    }
+        bookService.deleteBook(id);
+        return new ApiResponse<>(200, "Book deleted successfully", null);    }
 
        // User - Request Book
        @PreAuthorize("hasRole('USER')")
        @PostMapping("/request/{bookId}")
-       public String requestBook(@PathVariable Long bookId)
-       {
-           return bookService.requestBook(bookId);
+       public ApiResponse<Void> requestBook(@PathVariable Long bookId) {
+           bookService.requestBook(bookId);
+           return new ApiResponse<>(200, "Book request created successfully", null);
        }
 
 //       ADMIN - Approve Request
 
         @PreAuthorize("hasRole('ADMIN')")
         @PutMapping("/request/{id}/approve")
-        public String approve(@PathVariable Long id)
-        {
-            return bookService.approveRequest(id);
+        public ApiResponse<Void> approve(@PathVariable Long id) {
+            bookService.approveRequest(id);
+            return new ApiResponse<>(200, "Request approved", null);
         }
 
 
@@ -100,8 +103,9 @@ public class BookController
 
         @PreAuthorize("hasRole('ADMIN')")
         @PutMapping("/request/{id}/reject")
-        public String reject(@PathVariable Long id)
+        public ApiResponse<Void> reject(@PathVariable Long id)
         {
-            return bookService.rejectRequest(id);
+            bookService.rejectRequest(id);
+            return new ApiResponse<>(200, "Request rejected", null);
         }
 }

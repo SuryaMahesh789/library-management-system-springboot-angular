@@ -1,5 +1,6 @@
 package com.example.knowledgehub_library_management_system.user.controller;
 
+import com.example.knowledgehub_library_management_system.common.dto.ApiResponse;
 import com.example.knowledgehub_library_management_system.common.entity.User;
 import com.example.knowledgehub_library_management_system.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,31 +22,32 @@ public class UserController{
     // Admin Promoting User to Admin
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/promote/{userId}")
-    public String promoteUser(@PathVariable Long userId)
+    public ApiResponse<String> promoteUser(@PathVariable Long userId)
     {
-        return userService.promoteAdmin(userId);
+        userService.promoteAdmin(userId);
+        return new ApiResponse<>(200, "User promoted to ADMIN successfully", null);
     }
 
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
-    public Map<String,Object> getCurrentUser()
+    public ApiResponse<Map<String,Object>> getCurrentUser()
     {
-        return userService.getCurrentUserDetails();
+         return new ApiResponse<>(200,"User Details fetched",userService.getCurrentUserDetails());
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/dashboard")
-    public Map<String,Object> getDashboard()
+    public ApiResponse<Map<String,Object>> getDashboard()
     {
-        return userService.getDashboard();
+        return new ApiResponse<>(200,"Dashboard Fetched",userService.getDashboard());
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public Map<String,Object> getUserById(@PathVariable Long id)
+    public ApiResponse<Map<String,Object>> getUserById(@PathVariable Long id)
     {
-        return userService.getUserById(id);
+        return new ApiResponse<>(200,"User Fetched",userService.getUserById(id));
     }
 
 }
